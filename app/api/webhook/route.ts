@@ -32,8 +32,8 @@ async function streamToBuffer(stream: Stream): Promise<Buffer> {
 }
 
 // LINE의 GET 리퀘스트 확인용
-export async function GET(request: NextRequest) {
-  return NextResponse.json({ 
+export async function GET() {
+  return NextResponse.json({
     status: 'success',
     message: "Webhook is active. Ready to receive POST requests from LINE." 
   });
