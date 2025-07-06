@@ -31,18 +31,24 @@ export async function POST(request: NextRequest) {
 
     for (const event of events) {
       if (event.type === 'message' && event.message.type === 'image') {
+        const userLanguage = (event.source as { language?: string }).language || 'ja';
         const response = await lineClient.getMessageContent(event.message.id);
         const buffer = await streamToBuffer(response as unknown as Stream);
         const imageBase64 = buffer.toString('base64');
 
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
-        const prompt = "이 이미지에 보이는 랜드마크의 이름은 무엇인가요? 이 장소에 대해 모르는 사람에게 설명하듯이, 역사나 특징을 포함해서 3문장으로 친절하게 설명해주세요.";
-        
+        const prompt = `You are a helpful and friendly tour guide for Tokyo.
+        Analyze the user's image.
+        Identify the landmark in the image.
+        If it is a landmark, provide a brief, interesting 3-sentence description about its history or characteristics.
+        If it is NOT a landmark (e.g., a person, an animal, a generic object), state that clearly and describe what you see.
+        VERY IMPORTANT: You MUST write your entire response in the following language code: ${userLanguage}`;
+
         const result = await model.generateContent([
           prompt,
           { inlineData: { data: imageBase64, mimeType: 'image/jpeg' } },
         ]);
-        
+
         const aiResponseText = result.response.text();
 
         const replyMessage: TextMessage = {
