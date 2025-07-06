@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   Client,
+  TextMessage,
   WebhookEvent,
 } from '@line/bot-sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -83,12 +84,21 @@ export async function POST(request: NextRequest) {
         ]);
         const aiResponseText = result.response.text();
 
-        await lineClient.replyMessage(event.replyToken, { type: 'text', text: aiResponseText });
+        const replyMessage: TextMessage = {
+          type: 'text',
+          text: aiResponseText,
+        };
+        await lineClient.replyMessage(event.replyToken, replyMessage);
       }
     }
     return NextResponse.json({ status: 'ok' });
   } catch (error) {
-    if (error instanceof Error) console.error('❌ Detailed Error:', error.message);
+    // 에러가 발생하면, 어떤 에러인지 터미널에 자세히 표시합니다.
+    if (error instanceof Error) {
+      console.error('❌ Detailed Error:', error.message);
+    } else {
+      console.error('❌ An unknown error occurred:', error);
+    }
     return NextResponse.json({ status: 'error' }, { status: 500 });
   }
 }
