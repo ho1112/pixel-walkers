@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   Client,
   WebhookEvent,
-  Message,
   TextMessage,
 } from '@line/bot-sdk';
 import { GoogleGenerativeAI } from '@google/generative-ai';
