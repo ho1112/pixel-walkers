@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
         const buffer = await streamToBuffer(response as unknown as Stream);
         const imageBase64 = buffer.toString('base64');
 
-        const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
         const prompt = "이 이미지에 보이는 랜드마크의 이름은 무엇인가요? 이 장소에 대해 모르는 사람에게 설명하듯이, 역사나 특징을 포함해서 3문장으로 친절하게 설명해주세요.";
         
         const result = await model.generateContent([
